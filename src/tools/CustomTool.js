@@ -32,7 +32,8 @@ export default class CustomTool {
     Selection.expandToTag($wrapper);
 
     const range = Selection.range;
-    const $unwrappedContent = range.extractContents();
+    const $unwrappedContent = range.cloneContents();
+    range.extractContents();
 
     $wrapper.parentNode.removeChild($wrapper);
     range.insertNode($unwrappedContent);
