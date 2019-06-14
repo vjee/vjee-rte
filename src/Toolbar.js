@@ -17,7 +17,7 @@ export default class Toolbar {
     this.isMac = navigator.platform.indexOf("Mac") === 0;
 
     [BoldTool, ItalicTool, MarkTool, LinkTool].forEach(Tool => {
-      const $button = this.createToolbarButton(Tool);
+      const $button = this.createTool(Tool);
       this.$toolbar.firstChild.appendChild($button);
     });
 
@@ -36,7 +36,7 @@ export default class Toolbar {
     return $toolbar;
   }
 
-  createToolbarButton(Tool) {
+  createTool(Tool) {
     const $button = document.createElement("button");
     $button.classList.add("vjee-rte__toolbar__button");
 
@@ -51,16 +51,33 @@ export default class Toolbar {
     });
 
     if (tool.shortcut) {
-      const combination = this.isMac ? tool.shortcut[0] : tool.shortcut[1];
-      const combinationName = this.isMac
-        ? combination.replace("meta", "⌘").replace("alt", "⌥")
-        : combination;
+      const { keys, label } = this.parseShortcut(tool.shortcut);
 
-      this.shortcuts[combination] = () => tool.surround();
-      $button.title = `${tool.name} (${combinationName.toUpperCase()})`;
+      this.shortcuts[keys] = () => tool.surround();
+      $button.title = `${tool.name} (${label})`;
     }
 
     return $button;
+  }
+
+  parseShortcut(shortcut) {
+    shortcut = shortcut[this.isMac ? 0 : 1];
+
+    const keys = shortcut[0];
+    let label = shortcut[1].replace("meta", this.isMac ? "⌘" : "⊞");
+
+    if (this.isMac) {
+      label = label
+        .replace("ctrl", "⌃")
+        .replace("alt", "⌥")
+        .replace("shift", "⇧")
+        .replace(/\+/g, "");
+    }
+
+    return {
+      keys,
+      label: label.toUpperCase()
+    };
   }
 
   allowedToShow() {

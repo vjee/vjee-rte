@@ -212,11 +212,6 @@ color@^3.0.0:
     color-convert "^1.9.1"
     color-string "^1.5.2"
 
-combi@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/combi/-/combi-1.1.4.tgz#3551b826088a830f651cf8cabb37eea66d778160"
-  integrity sha512-akPkF21CrZlg+JyZHxR2omChLohzcLUT4R7sHSTlEeo39/LuxZWlBefc42tGNhV4nepN8MfJzL33g2WdSsZF4w==
-
 commander@^2.19.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"

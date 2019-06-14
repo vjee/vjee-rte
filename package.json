@@ -23,7 +23,6 @@
     "prod": "yarn cross-env NODE_ENV=production yarn rollup -c"
   },
   "dependencies": {
-    "combi": "^1.1.4",
     "core-js": "^3.1.3"
   }
 }
