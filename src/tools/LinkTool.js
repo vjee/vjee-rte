@@ -26,7 +26,7 @@ export default class LinkTool {
   }
 
   wrap(range) {
-    const href = prompt("Link location:");
+    const href = prompt("Link", "https://");
     document.execCommand("createLink", false, href);
   }
 

@@ -11,9 +11,8 @@ export default function create($node) {
   const toolbar = new Toolbar($node, selection);
 
   const keydown = combi(shortcut => {
-    console.log(shortcut);
     if (toolbar.shortcuts[shortcut]) toolbar.shortcuts[shortcut]();
-  }, true);
+  });
 
   function select() {
     if (!toolbar.allowedToShow()) return toolbar.close();
