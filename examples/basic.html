@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@vjee/rte - Basic Example</title>
+    <link href="../dist/rte.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 80px auto 0;
+            max-width: 500px;
+        }
+
+        .rte {            
+            margin-top: 40px;
+            line-height: 1.6;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>@vjee/rte - Basic Example</h1>
+
+    <div class="rte">
+
+        <p>Far far away, behind the word mountains, far from the countries Vokalia and <a href="#test">Consonantia</a>, there live the blind texts. Separated they live in <a href="https://some.url">Bookmarksgrove</a> right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a <b>paradisematic</b> country, in which roasted parts of sentences fly into your mouth.</p>
+
+        <p>Even the all-powerful <mark>Pointing has no control about the blind texts it is an almost unorthographic</mark> life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, <i>wild Question Marks and devious Semikoli</i>, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way.</p>
+    
+    </div>
+
+    <script src="../dist/rte.umd.js"></script>
+    <script>
+        const destroy = vjeeRTE(".rte");
+        // destroy();
+    </script>
+</body>
+</html>
