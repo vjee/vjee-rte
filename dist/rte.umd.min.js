@@ -1,5 +1,5 @@
 /**
- * @vjee/rte v0.1.0-alpha.0
+ * @vjee/rte v0.1.0-alpha.1
  * (c) 2019-2019 vjee
  * Released under the MIT License.
  */
