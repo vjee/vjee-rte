@@ -21,7 +21,7 @@
   },
   "scripts": {
     "dev": "yarn rollup -c --watch",
-    "prod": "cross-env NODE_ENV=production yarn rollup -c"
+    "prod": "yarn cross-env NODE_ENV=production yarn rollup -c"
   },
   "dependencies": {
     "combi": "^1.1.4"
