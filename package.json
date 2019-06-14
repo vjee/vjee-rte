@@ -2,8 +2,12 @@
   "name": "@vjee/rte",
   "version": "0.1.0-alpha.0",
   "description": "Inline RTE bar",
-  "main": "dist/rte.umd.js",
+  "browser": "dist/rte.umd.js",
   "author": "vjee <vjee2e@gmail.com>",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/vjee/vjee-rte"
+  },
   "license": "MIT",
   "devDependencies": {
     "autoprefixer": "^9.6.0",
