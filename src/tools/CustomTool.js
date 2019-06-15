@@ -32,7 +32,12 @@ export default class CustomTool {
     Selection.expandToTag($wrapper);
 
     const range = Selection.range;
-    const $unwrappedContent = range.cloneContents();
+    // const $unwrappedContent = range.cloneContents();
+    const $unwrappedContent = document.createDocumentFragment();
+    for (let i = 0; i < $wrapper.children.length; i++) {
+      $unwrappedContent.appendChild($wrapper.children[i]);
+    }
+
     range.extractContents();
 
     $wrapper.parentNode.removeChild($wrapper);
