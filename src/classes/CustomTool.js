@@ -34,8 +34,8 @@ export default class CustomTool {
     const range = Selection.range;
     // const $unwrappedContent = range.cloneContents();
     const $unwrappedContent = document.createDocumentFragment();
-    for (let i = 0; i < $wrapper.children.length; i++) {
-      $unwrappedContent.appendChild($wrapper.children[i]);
+    for (let i = 0; i < $wrapper.childNodes.length; i++) {
+      $unwrappedContent.appendChild($wrapper.childNodes[i]);
     }
 
     range.extractContents();
