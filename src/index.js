@@ -39,7 +39,8 @@ export default function create($node) {
     }
   });
 
-  function select() {
+  function select(event) {
+    if (event.target.closest(".vjee-rte__toolbar__button")) return;
     if (!toolbar.allowedToShow()) return toolbar.close();
 
     selection.save();

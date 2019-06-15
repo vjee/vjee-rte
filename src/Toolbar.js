@@ -48,12 +48,16 @@ export default class Toolbar {
 
     $button.addEventListener("click", () => {
       tool.surround();
+      this.checkStates();
     });
 
     if (tool.shortcut) {
       const { keys, label } = this.parseShortcut(tool.shortcut);
 
-      this.shortcuts[keys] = () => tool.surround();
+      this.shortcuts[keys] = () => {
+        tool.surround();
+        this.checkStates();
+      };
       $button.title = `${tool.name} (${label})`;
     }
 

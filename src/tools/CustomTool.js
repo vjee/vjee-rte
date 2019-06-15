@@ -20,12 +20,11 @@ export default class CustomTool {
   }
 
   wrap(range) {
-    const $marker = document.createElement(this.nodeName);
+    const $wrapper = document.createElement(this.nodeName);
 
-    $marker.appendChild(range.extractContents());
-    range.insertNode($marker);
-
-    Selection.expandToTag($marker);
+    $wrapper.appendChild(range.extractContents());
+    range.insertNode($wrapper);
+    Selection.expandToTag($wrapper);
   }
 
   unwrap($wrapper) {
