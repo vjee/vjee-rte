@@ -1,5 +1,5 @@
 /**
- * @vjee/rte v0.1.0-alpha.2
+ * @vjee/rte v0.1.0-alpha.3
  * (c) 2019-2019 vjee
  * Released under the MIT License.
  */
@@ -50,6 +50,15 @@ class Selection {
     selection.addRange(range);
   }
 
+  static containsHTML(selector) {
+    const range = Selection.range;
+    const $contents = range.cloneContents();
+
+    return selector
+      ? !!$contents.querySelector(selector)
+      : !!$contents.children.length;
+  }
+
   static get selection() {
     return window.getSelection();
   }
@@ -95,6 +104,9 @@ class NativeTool {
   checkState() {
     const active = document.queryCommandState(this.commandName);
     this.$button.classList[active ? "add" : "remove"]("active");
+    this.$button.classList[Selection.containsHTML("mark") ? "add" : "remove"](
+      "disabled"
+    );
   }
 }
 
@@ -166,7 +178,6 @@ class CustomTool {
     Selection.expandToTag($wrapper);
 
     const range = Selection.range;
-    // const $unwrappedContent = range.cloneContents();
     const $unwrappedContent = document.createDocumentFragment();
     for (let i = 0; i < $wrapper.childNodes.length; i++) {
       $unwrappedContent.appendChild($wrapper.childNodes[i]);
@@ -185,6 +196,9 @@ class CustomTool {
   checkState() {
     const $wrapper = Selection.findParentTag(this.nodeName.toUpperCase());
     this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
+    this.$button.classList[Selection.containsHTML() ? "add" : "remove"](
+      "disabled"
+    );
   }
 }
 
@@ -211,18 +225,11 @@ class LinkTool {
   constructor($button, toolbar) {
     this.$button = $button;
     this.toolbar = toolbar;
-  }
 
-  get name() {
-    return "Link";
-  }
+    this.name = "Link";
+    this.shortcut = [["meta+75", "meta+k"], ["ctrl+75", "ctrl+k"]];
 
-  get shortcut() {
-    return [["mod+75", "mod+k"], ["ctrl+75", "ctrl+k"]];
-  }
-
-  get icon() {
-    return `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"fill=currentFill /></svg>`;
+    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"fill=currentFill /></svg>`;
   }
 
   surround() {
@@ -248,6 +255,9 @@ class LinkTool {
   checkState() {
     const $wrapper = Selection.findParentTag("A");
     this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
+    this.$button.classList[Selection.containsHTML("mark") ? "add" : "remove"](
+      "disabled"
+    );
   }
 }
 
@@ -293,18 +303,19 @@ class Toolbar {
     $button.title = tool.name;
     $button.innerHTML = tool.icon;
 
-    $button.addEventListener("click", () => {
+    const toggleTool = () => {
+      if ($button.classList.contains("disabled")) return;
+
       tool.surround();
       this.checkStates();
-    });
+    };
+
+    $button.addEventListener("click", toggleTool);
 
     if (tool.shortcut) {
       const { keys, label } = this.parseShortcut(tool.shortcut);
 
-      this.shortcuts[keys] = () => {
-        tool.surround();
-        this.checkStates();
-      };
+      this.shortcuts[keys] = toggleTool;
       $button.title = `${tool.name} (${label})`;
     }
 
