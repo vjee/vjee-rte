@@ -43,7 +43,7 @@ export default function create($node) {
     if (event.target.closest(".vjee-rte__toolbar__button")) return;
     if (!toolbar.allowedToShow()) return toolbar.close();
 
-    selection.save();
+    // selection.save();
 
     toolbar.move();
     toolbar.open();

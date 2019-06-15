@@ -1,84 +1,61 @@
 export default class Selection {
-  constructor() {
-    this.savedSelectionRange = null;
-    this.isFakeBackgroundEnabled = false;
-  }
-
-  static get() {
-    return window.getSelection();
-  }
-
-  save() {
-    this.savedSelectionRange = Selection.range;
-  }
-
-  restore() {
-    if (!this.savedSelectionRange) {
-      return;
-    }
-
-    const sel = window.getSelection();
-
-    sel.removeAllRanges();
-    sel.addRange(this.savedSelectionRange);
-  }
-
   static findParentTag(tagName, className = null, searchDepth = 10) {
-    const sel = window.getSelection();
-    let parentTag = null;
+    const selection = Selection.selection;
+    let $parentTag = null;
 
-    if (!sel || !sel.anchorNode || !sel.focusNode) {
+    if (!selection || !selection.anchorNode || !selection.focusNode) {
       return null;
     }
 
-    const boundNodes = [sel.anchorNode, sel.focusNode];
+    const boundNodes = [selection.anchorNode, selection.focusNode];
 
-    boundNodes.forEach(parent => {
+    boundNodes.forEach($parent => {
       let searchDepthIterable = searchDepth;
 
-      while (searchDepthIterable > 0 && parent.parentNode) {
-        if (parent.tagName === tagName) {
-          parentTag = parent;
+      while (searchDepthIterable > 0 && $parent.parentNode) {
+        if ($parent.tagName === tagName) {
+          $parentTag = $parent;
 
           if (
             className &&
-            parent.classList &&
-            !parent.classList.contains(className)
+            $parent.classList &&
+            !$parent.classList.contains(className)
           ) {
-            parentTag = null;
+            $parentTag = null;
           }
 
-          if (parentTag) {
-            break;
-          }
+          if ($parentTag) break;
         }
 
-        parent = parent.parentNode;
+        $parent = $parent.parentNode;
         searchDepthIterable--;
       }
     });
 
-    return parentTag;
+    return $parentTag;
   }
 
-  static expandToTag(element) {
-    const sel = window.getSelection();
+  static expandToTag($node) {
+    const selection = Selection.selection;
 
-    sel.removeAllRanges();
+    selection.removeAllRanges();
     const range = document.createRange();
 
-    range.selectNodeContents(element);
-    sel.addRange(range);
+    range.selectNodeContents($node);
+    selection.addRange(range);
+  }
+
+  static get selection() {
+    return window.getSelection();
   }
 
   static get text() {
-    return window.getSelection ? window.getSelection().toString() : "";
+    return Selection.selection.toString();
   }
 
   static get range() {
-    const sel = window.getSelection();
-
-    return sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+    const selection = Selection.selection;
+    return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 
   static get rect() {
@@ -89,8 +66,8 @@ export default class Selection {
       height: 0
     };
 
-    const sel = window.getSelection();
-    const range = sel.getRangeAt(0).cloneRange();
+    const selection = Selection.selection;
+    const range = selection.getRangeAt(0).cloneRange();
 
     if (range.getBoundingClientRect) {
       rect = range.getBoundingClientRect();

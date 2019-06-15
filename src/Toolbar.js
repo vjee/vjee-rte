@@ -14,7 +14,7 @@ export default class Toolbar {
 
     this.$toolbar = this.createToolbar();
 
-    this.isMac = navigator.platform.indexOf("Mac") === 0;
+    this.isMac = navigator.platform.toLowerCase().indexOf("mac") === 0;
 
     [BoldTool, ItalicTool, MarkTool, LinkTool].forEach(Tool => {
       const $button = this.createTool(Tool);
@@ -85,7 +85,7 @@ export default class Toolbar {
   }
 
   allowedToShow() {
-    const currentSelection = Selection.get();
+    const currentSelection = Selection.selection;
     const selectedText = Selection.text;
 
     if (currentSelection.isCollapsed || selectedText.length < 1) {

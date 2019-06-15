@@ -24,6 +24,7 @@ export default class CustomTool {
 
     $wrapper.appendChild(range.extractContents());
     range.insertNode($wrapper);
+
     Selection.expandToTag($wrapper);
   }
 
@@ -37,18 +38,13 @@ export default class CustomTool {
     $wrapper.parentNode.removeChild($wrapper);
     range.insertNode($unwrappedContent);
 
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    const selection = Selection.selection;
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 
   checkState() {
     const $wrapper = Selection.findParentTag(this.nodeName.toUpperCase());
-
-    if ($wrapper) {
-      this.$button.classList.add("active");
-    } else {
-      this.$button.classList.remove("active");
-    }
+    this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
   }
 }
