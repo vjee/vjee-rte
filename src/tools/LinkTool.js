@@ -11,7 +11,7 @@ export default class LinkTool {
   }
 
   get shortcut() {
-    return [["mod+75", "mod+k"], ["ctrl+75", "ctrl+k"]];
+    return [["meta+75", "meta+k"], ["ctrl+75", "ctrl+k"]];
   }
 
   get icon() {
