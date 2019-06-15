@@ -1,4 +1,4 @@
-import CustomTool from "./CustomTool";
+import CustomTool from "./../classes/CustomTool";
 
 export default class MarkTool extends CustomTool {
   constructor($button, toolbar) {

@@ -1,8 +1,9 @@
 import Selection from "./Selection";
-import BoldTool from "./tools/BoldTool";
-import ItalicTool from "./tools/ItalicTool";
-import MarkTool from "./tools/MarkTool";
-import LinkTool from "./tools/LinkTool";
+import BoldTool from "../tools/BoldTool";
+import ItalicTool from "../tools/ItalicTool";
+import UnderlineTool from "../tools/UnderlineTool";
+import MarkTool from "../tools/MarkTool";
+import LinkTool from "../tools/LinkTool";
 
 export default class Toolbar {
   constructor($node, selection) {
@@ -16,7 +17,7 @@ export default class Toolbar {
 
     this.isMac = navigator.platform.toLowerCase().indexOf("mac") === 0;
 
-    [BoldTool, ItalicTool, MarkTool, LinkTool].forEach(Tool => {
+    [BoldTool, ItalicTool, UnderlineTool, MarkTool, LinkTool].forEach(Tool => {
       const $button = this.createTool(Tool);
       this.$toolbar.firstChild.appendChild($button);
     });

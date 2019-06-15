@@ -1,5 +1,5 @@
-import Selection from "./Selection";
-import Toolbar from "./Toolbar";
+import Selection from "./classes/Selection";
+import Toolbar from "./classes/Toolbar";
 
 function combi(cb, preventDefault = false) {
   return e => {

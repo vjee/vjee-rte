@@ -1,4 +1,4 @@
-import Selection from "./../Selection";
+import Selection from "./../classes/Selection";
 
 export default class LinkTool {
   constructor($button, toolbar) {
