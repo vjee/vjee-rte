@@ -1,5 +1,5 @@
 /**
- * @vjee/rte v0.1.0-alpha.3
+ * @vjee/rte v0.1.0-alpha.4
  * (c) 2019-2019 vjee
  * Released under the MIT License.
  */
@@ -180,7 +180,7 @@ class CustomTool {
     const range = Selection.range;
     const $unwrappedContent = document.createDocumentFragment();
     for (let i = 0; i < $wrapper.childNodes.length; i++) {
-      $unwrappedContent.appendChild($wrapper.childNodes[i]);
+      $unwrappedContent.appendChild($wrapper.cloneNode(true).childNodes[i]);
     }
 
     range.extractContents();
