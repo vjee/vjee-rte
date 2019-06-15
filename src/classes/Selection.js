@@ -45,6 +45,15 @@ export default class Selection {
     selection.addRange(range);
   }
 
+  static containsHTML(selector) {
+    const range = Selection.range;
+    const $contents = range.cloneContents();
+
+    return selector
+      ? !!$contents.querySelector(selector)
+      : !!$contents.children.length;
+  }
+
   static get selection() {
     return window.getSelection();
   }

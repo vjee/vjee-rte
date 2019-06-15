@@ -32,7 +32,6 @@ export default class CustomTool {
     Selection.expandToTag($wrapper);
 
     const range = Selection.range;
-    // const $unwrappedContent = range.cloneContents();
     const $unwrappedContent = document.createDocumentFragment();
     for (let i = 0; i < $wrapper.childNodes.length; i++) {
       $unwrappedContent.appendChild($wrapper.childNodes[i]);
@@ -51,5 +50,8 @@ export default class CustomTool {
   checkState() {
     const $wrapper = Selection.findParentTag(this.nodeName.toUpperCase());
     this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
+    this.$button.classList[Selection.containsHTML() ? "add" : "remove"](
+      "disabled"
+    );
   }
 }

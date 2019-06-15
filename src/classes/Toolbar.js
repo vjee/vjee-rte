@@ -47,18 +47,19 @@ export default class Toolbar {
     $button.title = tool.name;
     $button.innerHTML = tool.icon;
 
-    $button.addEventListener("click", () => {
+    const toggleTool = () => {
+      if ($button.classList.contains("disabled")) return;
+
       tool.surround();
       this.checkStates();
-    });
+    };
+
+    $button.addEventListener("click", toggleTool);
 
     if (tool.shortcut) {
       const { keys, label } = this.parseShortcut(tool.shortcut);
 
-      this.shortcuts[keys] = () => {
-        tool.surround();
-        this.checkStates();
-      };
+      this.shortcuts[keys] = toggleTool;
       $button.title = `${tool.name} (${label})`;
     }
 

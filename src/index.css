@@ -57,6 +57,11 @@
   background-color: #a8d6ff;
 }
 
+.vjee-rte__toolbar__button.disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 .vjee-rte__toolbar__input {
   padding: 0 4px;
   margin: 4px 2px 0;

@@ -1,3 +1,5 @@
+import Selection from "./Selection";
+
 export default class NativeTool {
   constructor($button, toolbar) {
     this.$button = $button;
@@ -11,5 +13,8 @@ export default class NativeTool {
   checkState() {
     const active = document.queryCommandState(this.commandName);
     this.$button.classList[active ? "add" : "remove"]("active");
+    this.$button.classList[Selection.containsHTML("mark") ? "add" : "remove"](
+      "disabled"
+    );
   }
 }
