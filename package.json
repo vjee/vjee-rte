@@ -1,6 +1,6 @@
 {
   "name": "@vjee/rte",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Inline RTE bar",
   "browser": "dist/rte.umd.js",
   "author": "vjee <vjee2e@gmail.com>",

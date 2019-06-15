@@ -1,110 +1,66 @@
 /**
- * @vjee/rte v0.1.0-alpha.1
+ * @vjee/rte v0.1.0-alpha.2
  * (c) 2019-2019 vjee
  * Released under the MIT License.
  */
-function combi (cb, preventDefault = false) {
-  return (e) => {
-    if (!e) return
-    if (preventDefault) e.preventDefault();
-
-    let combo = [
-      e.ctrlKey ? 'ctrl' : undefined,
-      e.altKey ? 'alt' : undefined,
-      e.shiftKey ? 'shift' : undefined,
-      e.metaKey ? 'meta' : undefined,
-      ['Shift', 'Meta', 'Control', 'Option', 'Alt'].indexOf(e.key) >= 0 ? undefined : e.code.replace(/Key|Digit/, '')
-    ].filter(Boolean);
-
-    if (combo.length >= 2) {
-      if (cb) {
-        cb(combo.join('+').toLowerCase(), e);
-      }
-    }
-  }
-}
-
 class Selection {
-  constructor() {
-    this.savedSelectionRange = null;
-    this.isFakeBackgroundEnabled = false;
-  }
-
-  static get() {
-    return window.getSelection();
-  }
-
-  save() {
-    this.savedSelectionRange = Selection.range;
-  }
-
-  restore() {
-    if (!this.savedSelectionRange) {
-      return;
-    }
-
-    const sel = window.getSelection();
-
-    sel.removeAllRanges();
-    sel.addRange(this.savedSelectionRange);
-  }
-
   static findParentTag(tagName, className = null, searchDepth = 10) {
-    const sel = window.getSelection();
-    let parentTag = null;
+    const selection = Selection.selection;
+    let $parentTag = null;
 
-    if (!sel || !sel.anchorNode || !sel.focusNode) {
+    if (!selection || !selection.anchorNode || !selection.focusNode) {
       return null;
     }
 
-    const boundNodes = [sel.anchorNode, sel.focusNode];
+    const boundNodes = [selection.anchorNode, selection.focusNode];
 
-    boundNodes.forEach(parent => {
+    boundNodes.forEach($parent => {
       let searchDepthIterable = searchDepth;
 
-      while (searchDepthIterable > 0 && parent.parentNode) {
-        if (parent.tagName === tagName) {
-          parentTag = parent;
+      while (searchDepthIterable > 0 && $parent.parentNode) {
+        if ($parent.tagName === tagName) {
+          $parentTag = $parent;
 
           if (
             className &&
-            parent.classList &&
-            !parent.classList.contains(className)
+            $parent.classList &&
+            !$parent.classList.contains(className)
           ) {
-            parentTag = null;
+            $parentTag = null;
           }
 
-          if (parentTag) {
-            break;
-          }
+          if ($parentTag) break;
         }
 
-        parent = parent.parentNode;
+        $parent = $parent.parentNode;
         searchDepthIterable--;
       }
     });
 
-    return parentTag;
+    return $parentTag;
   }
 
-  static expandToTag(element) {
-    const sel = window.getSelection();
+  static expandToTag($node) {
+    const selection = Selection.selection;
 
-    sel.removeAllRanges();
+    selection.removeAllRanges();
     const range = document.createRange();
 
-    range.selectNodeContents(element);
-    sel.addRange(range);
+    range.selectNodeContents($node);
+    selection.addRange(range);
+  }
+
+  static get selection() {
+    return window.getSelection();
   }
 
   static get text() {
-    return window.getSelection ? window.getSelection().toString() : "";
+    return Selection.selection.toString();
   }
 
   static get range() {
-    const sel = window.getSelection();
-
-    return sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+    const selection = Selection.selection;
+    return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 
   static get rect() {
@@ -115,14 +71,66 @@ class Selection {
       height: 0
     };
 
-    const sel = window.getSelection();
-    const range = sel.getRangeAt(0).cloneRange();
+    const selection = Selection.selection;
+    const range = selection.getRangeAt(0).cloneRange();
 
     if (range.getBoundingClientRect) {
       rect = range.getBoundingClientRect();
     }
 
     return rect;
+  }
+}
+
+class NativeTool {
+  constructor($button, toolbar) {
+    this.$button = $button;
+    this.toolbar = toolbar;
+  }
+
+  surround() {
+    document.execCommand(this.commandName);
+  }
+
+  checkState() {
+    const active = document.queryCommandState(this.commandName);
+    this.$button.classList[active ? "add" : "remove"]("active");
+  }
+}
+
+class BoldTool extends NativeTool {
+  constructor($button, toolbar) {
+    super($button, toolbar);
+
+    this.name = "Bold";
+    this.commandName = "bold";
+    this.shortcut = [["meta+66", "meta+b"], ["ctrl+66", "ctrl+b"]];
+
+    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"fill=currentFill /><path d="M0 0h24v24H0z"fill=none /></svg>`;
+  }
+}
+
+class ItalicTool extends NativeTool {
+  constructor($button, toolbar) {
+    super($button, toolbar);
+
+    this.name = "Italic";
+    this.commandName = "italic";
+    this.shortcut = [["meta+73", "meta+i"], ["ctrl+73", "ctrl+i"]];
+
+    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"fill=currentFill /></svg>`;
+  }
+}
+
+class UnderlineTool extends NativeTool {
+  constructor($button, toolbar) {
+    super($button, toolbar);
+
+    this.name = "Underline";
+    this.commandName = "underline";
+    this.shortcut = [["meta+85", "meta+u"], ["ctrl+85", "ctrl+u"]];
+
+    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"fill=currentFill /></svg>`;
   }
 }
 
@@ -146,72 +154,56 @@ class CustomTool {
   }
 
   wrap(range) {
-    const $marker = document.createElement(this.nodeName);
+    const $wrapper = document.createElement(this.nodeName);
 
-    $marker.appendChild(range.extractContents());
-    range.insertNode($marker);
+    $wrapper.appendChild(range.extractContents());
+    range.insertNode($wrapper);
 
-    Selection.expandToTag($marker);
+    Selection.expandToTag($wrapper);
   }
 
   unwrap($wrapper) {
     Selection.expandToTag($wrapper);
 
     const range = Selection.range;
-    const $unwrappedContent = range.extractContents();
+    // const $unwrappedContent = range.cloneContents();
+    const $unwrappedContent = document.createDocumentFragment();
+    for (let i = 0; i < $wrapper.childNodes.length; i++) {
+      $unwrappedContent.appendChild($wrapper.childNodes[i]);
+    }
+
+    range.extractContents();
 
     $wrapper.parentNode.removeChild($wrapper);
     range.insertNode($unwrappedContent);
 
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    const selection = Selection.selection;
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 
   checkState() {
     const $wrapper = Selection.findParentTag(this.nodeName.toUpperCase());
-
-    if ($wrapper) {
-      this.$button.classList.add("active");
-    } else {
-      this.$button.classList.remove("active");
-    }
-  }
-}
-
-class BoldTool extends CustomTool {
-  constructor($button, toolbar) {
-    super($button, toolbar);
-
-    this.name = "Bold";
-    this.nodeName = "b";
-    this.shortcut = ["meta+b", "ctrl+b"];
-
-    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"fill=currentFill /><path d="M0 0h24v24H0z"fill=none /></svg>`;
-  }
-}
-
-class ItalicTool extends CustomTool {
-  constructor($button, toolbar) {
-    super($button, toolbar);
-
-    this.name = "Italic";
-    this.nodeName = "i";
-    this.shortcut = ["meta+i", "ctrl-i"];
-
-    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"fill=currentFill /></svg>`;
+    this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
   }
 }
 
 class MarkTool extends CustomTool {
   constructor($button, toolbar) {
     super($button, toolbar);
-
-    this.name = "Mark";
     this.nodeName = "mark";
-    this.shortcut = ["alt+meta+h", "ctrl-alt-h"];
+  }
 
-    this.icon = `<svg height=20 viewBox="0 0 24 18"width=20 xmlns=http://www.w3.org/2000/svg><path d="M17.75 7L14 3.25l-10 10V17h3.75l10-10zm2.96-2.96c.39-.39.39-1.02 0-1.41L18.37.29c-.39-.39-1.02-.39-1.41 0L15 2.25 18.75 6l1.96-1.96z"fill=currentFill /><path d="M0 0h24v24H0z"fill=none /></svg>`;
+  get name() {
+    return "Mark";
+  }
+
+  get shortcut() {
+    return [["alt+meta+72", "alt+meta+h"], ["ctrl+alt+72", "ctrl+alt+h"]];
+  }
+
+  get icon() {
+    return `<svg height=20 viewBox="0 0 24 18"width=20 xmlns=http://www.w3.org/2000/svg><path d="M17.75 7L14 3.25l-10 10V17h3.75l10-10zm2.96-2.96c.39-.39.39-1.02 0-1.41L18.37.29c-.39-.39-1.02-.39-1.41 0L15 2.25 18.75 6l1.96-1.96z"fill=currentFill /><path d="M0 0h24v24H0z"fill=none /></svg>`;
   }
 }
 
@@ -219,23 +211,26 @@ class LinkTool {
   constructor($button, toolbar) {
     this.$button = $button;
     this.toolbar = toolbar;
+  }
 
-    this.name = "Link";
-    this.nodeName = "a";
-    this.shortcut = ["meta+k", "ctrl+k"];
+  get name() {
+    return "Link";
+  }
 
-    this.icon = `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"fill=currentFill /></svg>`;
+  get shortcut() {
+    return [["mod+75", "mod+k"], ["ctrl+75", "ctrl+k"]];
+  }
+
+  get icon() {
+    return `<svg height=24 viewBox="0 0 24 24"width=24 xmlns=http://www.w3.org/2000/svg><path d="M0 0h24v24H0z"fill=none /><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"fill=currentFill /></svg>`;
   }
 
   surround() {
     const range = Selection.range;
-    const $wrapper = Selection.findParentTag(this.nodeName.toUpperCase());
+    const $wrapper = Selection.findParentTag("A");
 
-    if ($wrapper) {
-      this.unwrap($wrapper);
-    } else {
-      this.wrap(range);
-    }
+    if (!!$wrapper) this.unwrap($wrapper);
+    else this.wrap(range);
 
     this.checkState();
   }
@@ -252,12 +247,7 @@ class LinkTool {
 
   checkState() {
     const $wrapper = Selection.findParentTag("A");
-
-    if ($wrapper) {
-      this.$button.classList.add("active");
-    } else {
-      this.$button.classList.remove("active");
-    }
+    this.$button.classList[!!$wrapper ? "add" : "remove"]("active");
   }
 }
 
@@ -271,10 +261,10 @@ class Toolbar {
 
     this.$toolbar = this.createToolbar();
 
-    this.isMac = navigator.platform.indexOf("Mac") === 0;
+    this.isMac = navigator.platform.toLowerCase().indexOf("mac") === 0;
 
-    [BoldTool, ItalicTool, MarkTool, LinkTool].forEach(Tool => {
-      const $button = this.createToolbarButton(Tool);
+    [BoldTool, ItalicTool, UnderlineTool, MarkTool, LinkTool].forEach(Tool => {
+      const $button = this.createTool(Tool);
       this.$toolbar.firstChild.appendChild($button);
     });
 
@@ -293,7 +283,7 @@ class Toolbar {
     return $toolbar;
   }
 
-  createToolbarButton(Tool) {
+  createTool(Tool) {
     const $button = document.createElement("button");
     $button.classList.add("vjee-rte__toolbar__button");
 
@@ -305,23 +295,44 @@ class Toolbar {
 
     $button.addEventListener("click", () => {
       tool.surround();
+      this.checkStates();
     });
 
     if (tool.shortcut) {
-      const combination = this.isMac ? tool.shortcut[0] : tool.shortcut[1];
-      const combinationName = this.isMac
-        ? combination.replace("meta", "⌘").replace("alt", "⌥")
-        : combination;
+      const { keys, label } = this.parseShortcut(tool.shortcut);
 
-      this.shortcuts[combination] = () => tool.surround();
-      $button.title = `${tool.name} (${combinationName.toUpperCase()})`;
+      this.shortcuts[keys] = () => {
+        tool.surround();
+        this.checkStates();
+      };
+      $button.title = `${tool.name} (${label})`;
     }
 
     return $button;
   }
 
+  parseShortcut(shortcut) {
+    shortcut = shortcut[this.isMac ? 0 : 1];
+
+    const keys = shortcut[0];
+    let label = shortcut[1].replace("meta", this.isMac ? "⌘" : "⊞");
+
+    if (this.isMac) {
+      label = label
+        .replace("ctrl", "⌃")
+        .replace("alt", "⌥")
+        .replace("shift", "⇧")
+        .replace(/\+/g, "");
+    }
+
+    return {
+      keys,
+      label: label.toUpperCase()
+    };
+  }
+
   allowedToShow() {
-    const currentSelection = Selection.get();
+    const currentSelection = Selection.selection;
     const selectedText = Selection.text;
 
     if (currentSelection.isCollapsed || selectedText.length < 1) {
@@ -373,6 +384,29 @@ class Toolbar {
   }
 }
 
+function combi(cb, preventDefault = false) {
+  return e => {
+    if (!e) return;
+    if (preventDefault) e.preventDefault();
+
+    let combo = [
+      e.ctrlKey ? "ctrl" : undefined,
+      e.altKey ? "alt" : undefined,
+      e.shiftKey ? "shift" : undefined,
+      e.metaKey ? "meta" : undefined,
+      ["Shift", "Meta", "Control", "Option", "Alt"].indexOf(e.key) >= 0
+        ? undefined
+        : e.keyCode
+    ].filter(Boolean);
+
+    if (combo.length >= 2) {
+      if (cb) {
+        cb(combo.join("+"), e);
+      }
+    }
+  };
+}
+
 function create($node) {
   if (typeof $node === "string") {
     $node = document.querySelector($node);
@@ -381,14 +415,18 @@ function create($node) {
   const selection = new Selection();
   const toolbar = new Toolbar($node, selection);
 
-  const keydown = combi(shortcut => {
-    if (toolbar.shortcuts[shortcut]) toolbar.shortcuts[shortcut]();
+  const keydown = combi((shortcut, event) => {
+    if (toolbar.shortcuts[shortcut]) {
+      event.preventDefault();
+      toolbar.shortcuts[shortcut]();
+    }
   });
 
-  function select() {
+  function select(event) {
+    if (event.target.closest(".vjee-rte__toolbar__button")) return;
     if (!toolbar.allowedToShow()) return toolbar.close();
 
-    selection.save();
+    // selection.save();
 
     toolbar.move();
     toolbar.open();
